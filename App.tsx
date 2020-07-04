@@ -15,6 +15,7 @@ import { Item } from "react-native-paper/lib/typescript/src/components/Drawer/Dr
 const ENDPOINT = "https://my-momentum-staging.herokuapp.com/api/features/";
 
 
+// In TypeScript, you define your component props in an Interface like this.
 interface FeatureProps {
   feature: any,
   selected: number,
@@ -22,6 +23,11 @@ interface FeatureProps {
 }
 
 
+/**
+ * I've isolated the Feature component, because as you keep working
+ * you'll see that it's really easy to build bloated components. Keeping
+ * them lean like this makes it easy to keep track of what's happening where.
+ */
 const Feature = ({
   feature,
   select,
@@ -79,6 +85,10 @@ export default function App() {
     loadItems();
   }, [loadItems]);
 
+  // You were looping over the text, like in the example I sent you, 
+  // but to create the list of cards, you needed to add your <Card /> 
+  // component _inside_ the items.map, which is why you weren't able to 
+  // access the attributes you needed to display the images, etc.
   return (
     <ScrollView style={styles.container}>
       {items.map((feature) => (
