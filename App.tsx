@@ -7,14 +7,65 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 // or any pure javascript modules available in npm
-import { Card, Button } from "react-native-paper";
+import { Card, Title, Paragraph } from "react-native-paper";
+import { ScrollView } from "react-native-gesture-handler";
+import { Item } from "react-native-paper/lib/typescript/src/components/Drawer/Drawer";
 
 // The endpoint from which we will fetch the featured items
 const ENDPOINT = "https://my-momentum-staging.herokuapp.com/api/features/";
 
+
+interface FeatureProps {
+  feature: any,
+  selected: number,
+  select: Function,
+}
+
+
+const Feature = ({
+  feature,
+  select,
+  selected
+}: FeatureProps) => {
+  console.log('@@ feature: ', feature);
+  return (
+    <Card
+      key={feature.id}
+      elevation={10}
+      style={styles.card}
+      onPress={() => {
+        console.log('@@ pressed: ', feature.id);
+        select(feature.id);
+      }}
+    >
+      <Card.Cover
+        source={{
+          uri: feature.public_image,
+        }}
+      />
+      <Card.Content>
+        <Title>{feature.title}</Title>
+        {selected === feature.id && (
+          <Paragraph>{feature.short_description}</Paragraph>
+        )}
+      </Card.Content>
+    </Card>
+  )
+};
+
 export default function App() {
   // Where we will store the featured items
   const [items, setItems] = useState<any[]>([]);
+  const [selected, setSelected] = useState(-1);
+
+  const select = useCallback((id: number) => {
+    if(id === selected){
+      setSelected(-1);
+    }
+    else {
+      setSelected(id);
+    }
+  }, [setSelected, selected]);
 
   // The function we will use to load the items
   const loadItems = useCallback(async () => {
@@ -29,45 +80,24 @@ export default function App() {
   }, [loadItems]);
 
   return (
-    <View style={styles.container}>
-      <Card>
-        <Card.Cover
-          style={{ height: 200, width: 300, alignItems: "center" }}
-          source={{
-            uri: "https://my-momentum-staging.herokuapp.com/api/features/",
-          }}
+    <ScrollView style={styles.container}>
+      {items.map((feature) => (
+        <Feature
+          feature={feature}
+          select={select}
+          selected={selected}
         />
-        {items.map((item) => (
-          <Text>{item.title}</Text>
-        ))}
-        <Card.Cover
-          style={{ height: 200, width: 300, alignItems: "center" }}
-          source={{
-            uri: "https://my-momentum-staging.herokuapp.com/api/features/",
-          }}
-        />
-        {items.map((item) => (
-          <Text>{item.title}</Text>
-        ))}
-        <Card.Cover
-          style={{ height: 200, width: 300, alignItems: "center" }}
-          source={{
-            uri: "https://my-momentum-staging.herokuapp.com/api/features/",
-          }}
-        />
-        {items.map((item) => (
-          <Text>{item.title}</Text>
-        ))}
-      </Card>
-    </View>
+      ))}
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
-    width: "100%",
-    backgroundColor: "orange",
+    padding: 0,
+    overflow: 'visible',
   },
+  card: {
+    marginBottom: 20,
+    margin: 10,
+  }
 });
