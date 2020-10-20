@@ -22,6 +22,10 @@ test of Expo
         
         for the styles I will use a simple knowledge I got using css with the styles
         
+        ## TypeScript How to learned.
+        
+        The best way to learn a new language is reading the documentation and code a project with the language.
+        
         
  
  
